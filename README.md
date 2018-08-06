@@ -1,37 +1,37 @@
 # Cordova Plugin BaiduOcr
 ================================
 
-Cross-platform BaiduOcr for Cordova / PhoneGap.
+百度云OCR的cordova插件，身份证识别功能已测试通过，取消原工程的hook部分，修改部分bug。
 
-Follows the [Cordova Plugin spec](https://cordova.apache.org/docs/en/latest/plugin_ref/spec.html), so that it works with [Plugman](https://github.com/apache/cordova-plugman).
+Forked from https://github.com/liugogal/cordova-plugin-baidu-ocr
+
 
 ## Installation
 
 
-This requires cordova 7.1.0+ ( current stable v8.0.0 )
+1、Run
 
-    cordova plugin add cordova-plugin-baidu-ocr
+    cordova plugin add cordova-baidu-ocr
 
-It is also possible to install via repo url directly ( unstable )
+Or
 
-    cordova plugin add https://github.com/liugogal/cordova-plugin-baidu-ocr.git
+    cordova plugin add https://github.com/hankersyan/cordova-baidu-ocr.git
 
-注意：
+2、Baidu云申请并下载aip.license授权文件。注意：id应匹配。
 
-1、首先需要到Baidu上注册并且申请并下载aip.license授权文件，具体操作查看：https://ai.baidu.com/docs#/OCR-Android-SDK/top
+3、在config.xml里添加license文件的resource-file，注意：修改PATH/TO/
 
-2、然后将aip.license拷贝到www/assets下面。
-
-注意：官方说的是拷贝到android的app/src/main/assets下面，不用担心，此插件使用了hook钩子做文件拷贝，可以放心使用。
-
+    <platform name="android">
+        <resource-file src="PATH/TO/aip-android.license" target="app/src/main/assets/aip.license" />
+    </platform>
+    <platform name="ios">
+        <resource-file src="PATH/TO/aip-ios.license" target="aip.license" />
+    </platform>
 
 ### Supported Platforms
 
 - Android
-- iOS (come soon)
-
-
-### Cordova Build Usage
+- iOS
 
 
 ### Using the plugin ###
@@ -40,7 +40,7 @@ A full example could be:
 
 初始化（init）：
 ```js
-    cordova.plugins.BaiduOcr.init(
+    BaiduOcr.init(
         ()=>{
             console.log('init ok');
         },
@@ -52,7 +52,7 @@ A full example could be:
 ```js
     //默认使用的是本地质量控制，如果想使用拍照扫描的方式，可以修改参数为
     //nativeEnable:false,nativeEnableManual:false
-    cordova.plugins.BaiduOcr.scanId(
+    BaiduOcr.scanId(
         (result)=>{
             console.log(JSON.stringify(result));
         },
@@ -74,66 +74,4 @@ A full example could be:
         (error)=>{
             console.log(error)
         });
-```
-
-
-### ionic-native ###
-install：
-```bash
-    npm i @liu-gogal/baidu-ocr --save
-```
-app.module.ts:
-```js
-    import {BaiduOcr} from "@liu-gogal/baidu-ocr";
-    @NgModule({
-        providers: [
-            BaiduOcr
-        ]
-    })
-    export class AppModule {}
-```
-view.page.ts:
-```js
-    import {BaiduOcr} from "@liu-gogal/baidu-ocr";
-    @IonicPage()
-    @Component({
-        selector: 'view-page',
-        templateUrl: 'view-page.html'
-    })
-    export class ViewPage {
-        constructor(private baiduOcr: BaiduOcr) {}
-        
-        doInit() {
-            this.baiduOcr.init()
-                .then((result)=>{
-                    
-                })
-                .catch((error)=>{
-                    
-                });
-        }
-        
-        doDestroy() {
-            this.baiduOcr.destroy()
-                .then((result)=>{
-                    
-                })
-                .catch((error)=>{
-                    
-                });
-        }
-        
-        doScanId() {
-            this.baiduOcr.scanId({contentType: 'IDCardFront', nativeEnable: true, nativeEnableManual: true})
-                .then((result)=>{
-                    if (result.message == "OK") {
-                        console.log(result.data);
-                    }
-                })
-                .catch((error)=>{
-                    
-                });
-        }
-        
-    }
 ```

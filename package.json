@@ -1,9 +1,9 @@
 {
-  "name": "cordova-plugin-baidu-ocr",
-  "version": "1.0.7",
-  "description": "Baidu Ocr",
+  "name": "cordova-baidu-ocr",
+  "version": "1.0.8",
+  "description": "Cordova plugin of Baidu Ocr",
   "cordova": {
-    "id": "cordova-plugin-baidu-ocr",
+    "id": "cordova-baidu-ocr",
     "platforms": [
       "ios",
       "android"
@@ -11,15 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liugogal/cordova-plugin-baidu-ocr.git"
+    "url": "git+https://github.com/hankersyan/cordova-baidu-ocr.git"
   },
   "keywords": [
     "ecosystem:cordova",
-    "ecosystem:phonegap",
     "cordova-ios",
     "cordova-android",
-    "cordova-windows",
-    "cordova-browser",
     "cordova:plugin"
   ],
   "engines": {
@@ -33,10 +30,10 @@
       }
     }
   },
-  "author": "liu-gogal",
+  "author": "hankers.yan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/liugogal/cordova-plugin-baidu-ocr/issues"
+    "url": "https://github.com/hankersyan/cordova-baidu-ocr/issues"
   },
-  "homepage": "https://github.com/liugogal/cordova-plugin-baidu-ocr#readme"
+  "homepage": "https://github.com/hankersyan/cordova-baidu-ocr#readme"
 }
