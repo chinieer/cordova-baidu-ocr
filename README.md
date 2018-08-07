@@ -67,7 +67,7 @@ A full example could be:
 ```
 销毁本地控制模型（destroy）：
 ```js
-    cordova.plugins.BaiduOcr.destroy(
+    BaiduOcr.destroy(
         ()=>{
             console.log('destroy ok');
         },
