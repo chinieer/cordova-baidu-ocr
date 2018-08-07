@@ -50,7 +50,7 @@ A full example could be:
 ```
 扫描身份证（scan id card）:
 ```js
-    //默认使用的是本地质量控制，如果想使用拍照扫描的方式，可以修改参数为
+    //默认使用的是本地质量控制，如果想使用拍照的方式，可以修改参数为
     //nativeEnable:false,nativeEnableManual:false
     BaiduOcr.scanId(
         (result)=>{
@@ -60,7 +60,7 @@ A full example could be:
             console.log(error)
         },
         {
-            contentType:"IDCardBack",
+            contentType:"IDCardFront", // 背面传 IDCardBack
             nativeEnable:true,
             nativeEnableManual:true
         });
