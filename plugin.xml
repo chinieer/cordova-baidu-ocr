@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-baidu-ocr"
-        version="1.0.8">
+        version="1.0.9">
 
     <name>BaiduOcr</name>
     <description>百度OCR插件</description>
@@ -63,22 +63,12 @@
             </feature>
         </config-file>
 
-        <!--<config-file target="*-Info.plist" parent="CFBundleURLTypes">
-            <array>
-                <dict>
-                    <key>NSCameraUsageDescription</key>
-                    <string>允许使用摄像头!</string>
-                    <key>NSPhotoLibraryUsageDescription</key>
-                    <string>允许使用相册!</string>
-                </dict>
-            </array>
-        </config-file>-->
-        <edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
-            <string>允许使用摄像头!</string>
-        </edit-config>
-        <edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
-            <string>允许使用相册!</string>
-        </edit-config>
+        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+            <string>允许使用摄像头</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
+            <string>允许使用相册</string>
+        </config-file>
 
         <header-file src="src/ios/Plugins/CDVBaiduOcr.h"/>
         <source-file src="src/ios/Plugins/CDVBaiduOcr.m"/>
