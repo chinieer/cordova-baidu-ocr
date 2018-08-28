@@ -1,6 +1,6 @@
 {
   "name": "cordova-baidu-ocr",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Cordova plugin of Baidu Ocr",
   "cordova": {
     "id": "cordova-baidu-ocr",
