@@ -1,4 +1,4 @@
-# Cordova Plugin BaiduOcr
+# Cordova Baidu OCR 文字识别插件
 ================================
 
 百度云OCR的cordova插件，iOS和android能识别身份证、银行卡、行驶证、驾驶证、车牌、营业执照、通用票据，android还能识别护照、数字、二维码、名片、手写、彩票、增值税发票。

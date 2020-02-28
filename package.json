@@ -1,39 +1,39 @@
 {
-  "name": "cordova-baidu-ocr",
-  "version": "1.1.0",
-  "description": "Cordova plugin of Baidu Ocr",
-  "cordova": {
-    "id": "cordova-baidu-ocr",
-    "platforms": [
-      "ios",
-      "android"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hankersyan/cordova-baidu-ocr.git"
-  },
-  "keywords": [
-    "ecosystem:cordova",
-    "cordova-ios",
-    "cordova-android",
-    "cordova:plugin"
-  ],
-  "engines": {
-    "cordovaDependencies": {
-      "7.0.0": {
-        "cordova-android": ">=6.3.0"
-      },
-      "7.1.0": {
-        "cordova-android": ">=6.3.0",
-        "cordova": ">=7.1.0"
-      }
-    }
-  },
-  "author": "hankersyan",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/hankersyan/cordova-baidu-ocr/issues"
-  },
-  "homepage": "https://github.com/hankersyan/cordova-baidu-ocr#readme"
+    "name": "cordova-baidu-ocr",
+    "version": "1.1.1",
+    "description": "Cordova plugin of Baidu Ocr",
+    "cordova": {
+        "id": "cordova-baidu-ocr",
+        "platforms": [
+            "ios",
+            "android"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hankersyan/cordova-baidu-ocr.git"
+    },
+    "keywords": [
+        "ecosystem:cordova",
+        "cordova-ios",
+        "cordova-android",
+        "cordova:plugin"
+    ],
+    "engines": {
+        "cordovaDependencies": {
+            "7.0.0": {
+                "cordova-android": ">=6.3.0"
+            },
+            "7.1.0": {
+                "cordova-android": ">=6.3.0",
+                "cordova": ">=7.1.0"
+            }
+        }
+    },
+    "author": "hankersyan",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/hankersyan/cordova-baidu-ocr/issues"
+    },
+    "homepage": "https://github.com/hankersyan/cordova-baidu-ocr#readme"
 }

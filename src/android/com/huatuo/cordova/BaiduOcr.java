@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.logging.Handler;
 
 public class BaiduOcr extends CordovaPlugin {
 
@@ -135,7 +137,14 @@ public class BaiduOcr extends CordovaPlugin {
 
                 });
         Log.e(TAG, "CameraNativeHelper.init ok");
-        callbackContext.success();
+
+        new android.os.Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something here
+                callbackContext.success();
+            }
+        }, 1000);
     }
 
     /**
@@ -537,8 +546,8 @@ public class BaiduOcr extends CordovaPlugin {
             @Override
             public void onResult(IDCardResult result) {
                 if (result != null && mCallback != null) {
-                    Log.i(TAG, result.toString());
-                    mCallback.success(JsonUtils.toJson(result));
+                    Log.i(TAG, result.getJsonRes());
+                    mCallback.success(result.getJsonRes());
                 }
             }
 
@@ -546,7 +555,7 @@ public class BaiduOcr extends CordovaPlugin {
             public void onError(OCRError error) {
                 if (error != null && mCallback != null) {
                     Log.i(TAG, error.toString());
-                    mCallback.error(JsonUtils.toJson(error));
+                    mCallback.error(error.getMessage());
                 }
             }
         });

@@ -24,8 +24,8 @@ void (^_failHandler)(NSError *);
 
     NSMutableDictionary* resultDic = [NSMutableDictionary dictionary];
 
-    //     授权方法1：在此处填写App的Api Key/Secret Key
-    //    [[AipOcrService shardService] authWithAK:@"AK" andSK:@"SK"];
+    // 授权方法1：在此处填写App的Api Key/Secret Key
+    //[[AipOcrService shardService] authWithAK:@"AK" andSK:@"SK"];
 
 
     // 授权方法2（更安全）： 下载授权文件，添加至资源
@@ -42,31 +42,11 @@ void (^_failHandler)(NSError *);
         return;
     }
     [[AipOcrService shardService] authWithLicenseFileData:licenseFileData];
-
-    //获取token回调
-    [[AipOcrService shardService] getTokenSuccessHandler:^(NSString *token) {
-        NSLog(@"获取token成功: %@",token);
-        hasGotToken = YES;
-    } failHandler:^(NSError *error) {
-        NSLog(@"获取token失败: %@",error);
-        resultDic[@"code"] = @(-1);
-        resultDic[@"message"] = @"获取token失败";
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:resultDic];
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        hasGotToken = NO;
-    }];
-
+    
     __weak CDVPlugin* ws = self;
     
     _successHandler = ^(id result){
-        NSMutableDictionary* resultDic = [NSMutableDictionary dictionary];
-
-        resultDic[@"code"] = @(0);
-        resultDic[@"message"] = @"OK";
-        resultDic[@"data"] = result;
-
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:resultDic];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
 
         [ws.commandDelegate sendPluginResult:pluginResult callbackId:currentCommandCallbackId];
 
@@ -88,6 +68,26 @@ void (^_failHandler)(NSError *);
             [ws.viewController dismissViewControllerAnimated:YES completion:nil];
         });
     };
+
+    //获取token回调
+    [[AipOcrService shardService] getTokenSuccessHandler:^(NSString *token) {
+        NSLog(@"获取token成功: %@",token);
+        hasGotToken = YES;
+        
+        resultDic[@"code"] = @(0);
+        resultDic[@"message"] = @"获取token成功";
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:resultDic];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } failHandler:^(NSError *error) {
+        NSLog(@"获取token失败: %@",error);
+        resultDic[@"code"] = @(-1);
+        resultDic[@"message"] = @"获取token失败";
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:resultDic];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        hasGotToken = NO;
+    }];
 
 }
 
@@ -142,63 +142,14 @@ void (^_failHandler)(NSError *);
         }
     }
 
-
     UIViewController * vc =
     [AipCaptureCardVC ViewControllerWithCardType:cardType andImageHandler:^(UIImage *image){
         [[AipOcrService shardService] detectIdCardFrontFromImage:image withOptions:nil successHandler:^(id result){
             NSLog(@"%@", result);
 
-            //NSMutableString *message = [NSMutableString string];
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
 
-
-            if(result[@"words_result"]){
-                if([result[@"words_result"] isKindOfClass:[NSDictionary class]]){
-
-                    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-                    NSDictionary *wordsResult = [NSDictionary dictionaryWithDictionary:result[@"words_result"]];
-
-                    if(wordsResult[@"姓名"] && wordsResult[@"姓名"][@"words"])
-                        data[@"name"] = wordsResult[@"姓名"][@"words"];
-                    if(wordsResult[@"出生"] && wordsResult[@"出生"][@"words"])
-                        data[@"birthday"] = wordsResult[@"出生"][@"words"];
-                    if(wordsResult[@"公民身份号码"] && wordsResult[@"公民身份号码"][@"words"])
-                        data[@"idNumber"] = wordsResult[@"公民身份号码"][@"words"];
-                    if(wordsResult[@"性别"] && wordsResult[@"性别"][@"words"])
-                        data[@"gender"] = wordsResult[@"性别"][@"words"];
-                    if(wordsResult[@"住址"] && wordsResult[@"住址"][@"words"])
-                        data[@"address"] = wordsResult[@"住址"][@"words"];
-                    if(wordsResult[@"民族"] && wordsResult[@"民族"][@"words"])
-                        data[@"ethnic"] = wordsResult[@"民族"][@"words"];
-
-                    if(wordsResult[@"失效日期"] && wordsResult[@"失效日期"][@"words"])
-                        data[@"expiryDate"] = wordsResult[@"失效日期"][@"words"];
-                    if(wordsResult[@"签发日期"] && wordsResult[@"签发日期"][@"words"])
-                        data[@"signDate"] = wordsResult[@"签发日期"][@"words"];
-                    if(wordsResult[@"签发机关"] && wordsResult[@"签发机关"][@"words"])
-                        data[@"issueAuthority"] = wordsResult[@"签发机关"][@"words"];
-
-                    resultDic[@"code"] = @(0);
-                    resultDic[@"message"] = @"OK";
-                    resultDic[@"data"] = data;
-
-                    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:resultDic];
-
-                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-
-                }else if([result[@"words_result"] isKindOfClass:[NSArray class]]){
-                    //其他类型的文本扫描，后期增加
-                    NSLog(@"words_result: %@", result);
-                }
-
-            }else{
-                NSLog(@"words_result: %@", result);
-            }
-
-            //_successHandler(result);
-            // 这里可以存入相册
-            //UIImageWriteToSavedPhotosAlbum(image, nil, nil, (__bridge void *)self);
-
-            //NSLog(@"%@", [NSThread currentThread]);
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 
             //回到主线程
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -218,9 +169,6 @@ void (^_failHandler)(NSError *);
 
 - (void)destroy:(CDVInvokedUrlCommand *)command {
     return;
-}
-
-- (void)scanBase:(CDVInvokedUrlCommand *)command {
 }
 
 - (void)scanBankCard:(CDVInvokedUrlCommand *)command {
