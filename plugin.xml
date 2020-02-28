@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-baidu-ocr"
-        version="1.0.10">
+        version="1.1.0">
 
     <name>BaiduOcr</name>
     <description>百度OCR插件</description>
@@ -28,6 +28,8 @@
         <source-file src="src/android/com/huatuo/cordova/FileUtil.java"
                      target-dir="src/com/huatuo/cordova"/>
         <source-file src="src/android/com/huatuo/cordova/JsonUtils.java"
+                     target-dir="src/com/huatuo/cordova"/>
+        <source-file src="src/android/com/huatuo/cordova/RecognizeService.java"
                      target-dir="src/com/huatuo/cordova"/>
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="BaiduOcr">

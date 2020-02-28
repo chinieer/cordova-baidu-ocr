@@ -2,7 +2,7 @@
 //  CDVBaiduOcr.m
 //  myTestCordova
 //
-//  Created by mac on 2018/6/4.
+//  Created by hankers.yan on 2020/2/28.
 //
 
 #import <Cordova/CDV.h>
@@ -11,8 +11,14 @@
 #import <AipOcrSdk/AipOcrSdk.h>
 
 BOOL hasGotToken = NO;
+NSString* currentCommandCallbackId;
+// 默认的识别成功的回调
+void (^_successHandler)(id);
+// 默认的识别失败的回调
+void (^_failHandler)(NSError *);
 
-@implementation CDVBaiduOcr
+@implementation CDVBaiduOcr {
+}
 
 - (void)init:(CDVInvokedUrlCommand *)command {
 
@@ -50,6 +56,38 @@ BOOL hasGotToken = NO;
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         hasGotToken = NO;
     }];
+
+    __weak CDVPlugin* ws = self;
+    
+    _successHandler = ^(id result){
+        NSMutableDictionary* resultDic = [NSMutableDictionary dictionary];
+
+        resultDic[@"code"] = @(0);
+        resultDic[@"message"] = @"OK";
+        resultDic[@"data"] = result;
+
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:resultDic];
+
+        [ws.commandDelegate sendPluginResult:pluginResult callbackId:currentCommandCallbackId];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ws.viewController dismissViewControllerAnimated:YES completion:nil];
+        });
+    };
+    
+    _failHandler = ^(NSError *error){
+        NSMutableDictionary* resultDic = [NSMutableDictionary dictionary];
+
+        resultDic[@"code"] = @(-1);
+        resultDic[@"message"] = @"读取失败";
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:resultDic];
+
+        [ws.commandDelegate sendPluginResult:pluginResult callbackId:currentCommandCallbackId];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ws.viewController dismissViewControllerAnimated:YES completion:nil];
+        });
+    };
 
 }
 
@@ -180,6 +218,87 @@ BOOL hasGotToken = NO;
 
 - (void)destroy:(CDVInvokedUrlCommand *)command {
     return;
+}
+
+- (void)scanBase:(CDVInvokedUrlCommand *)command {
+}
+
+- (void)scanBankCard:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc =
+            [AipCaptureCardVC ViewControllerWithCardType:CardTypeBankCard
+                                         andImageHandler:^(UIImage *image) {
+                                             [[AipOcrService shardService] detectBankCardFromImage:image
+                                                                                    successHandler:_successHandler
+                                                                                       failHandler:_failHandler];
+                                         }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
+}
+
+- (void)scanVehicleLicense:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc = [AipGeneralVC ViewControllerWithHandler:^(UIImage *image) {
+
+        [[AipOcrService shardService] detectVehicleLicenseFromImage:image
+                                      withOptions:nil
+                                   successHandler:_successHandler
+                                      failHandler:_failHandler];
+    }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
+}
+
+- (void)scanDrivingLicense:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc = [AipGeneralVC ViewControllerWithHandler:^(UIImage *image) {
+
+        [[AipOcrService shardService] detectDrivingLicenseFromImage:image
+                                      withOptions:nil
+                                   successHandler:_successHandler
+                                      failHandler:_failHandler];
+    }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
+}
+
+- (void)scanLicensePlate:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc = [AipGeneralVC ViewControllerWithHandler:^(UIImage *image) {
+
+        [[AipOcrService shardService] detectPlateNumberFromImage:image
+                                      withOptions:nil
+                                   successHandler:_successHandler
+                                      failHandler:_failHandler];
+    }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
+}
+
+- (void)scanBusinessLicense:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc = [AipGeneralVC ViewControllerWithHandler:^(UIImage *image) {
+
+        [[AipOcrService shardService] detectBusinessLicenseFromImage:image
+                                      withOptions:nil
+                                   successHandler:_successHandler
+                                      failHandler:_failHandler];
+    }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
+}
+
+- (void)scanReceipt:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc = [AipGeneralVC ViewControllerWithHandler:^(UIImage *image) {
+
+        [[AipOcrService shardService] detectReceiptFromImage:image
+                                      withOptions:nil
+                                   successHandler:_successHandler
+                                      failHandler:_failHandler];
+    }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
 }
 
 @end

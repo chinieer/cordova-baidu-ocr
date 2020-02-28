@@ -32,6 +32,10 @@
                     failHandler:(void (^)(NSError *error))failHandler;
 
 
+- (void) formRecognitionFromImage: (UIImage*)image
+  withOptions: (NSDictionary *)options
+successHandler: (void (^)(id result))successHandler
+  failHandler: (void (^)(NSError* err))failHandler;
 /**
  * 通用文字识别（含位置信息）
  * @param image 需要识别的图片
@@ -207,6 +211,18 @@
  * @param failHandler 失败回调
  */
 - (void) detectReceiptFromImage: (UIImage *)image
+                    withOptions: (NSDictionary *)options
+                 successHandler: (void (^)(id result))successHandler
+                    failHandler: (void (^)(NSError* err))failHandler;
+
+/**
+ * iOCR
+ * @param image 图像
+ * @param options 可选参数
+ * @param successHandler 成功回调
+ * @param failHandler 失败回调
+ */
+- (void) iOCRRecognitionFromImage: (UIImage *)image
                     withOptions: (NSDictionary *)options
                  successHandler: (void (^)(id result))successHandler
                     failHandler: (void (^)(NSError* err))failHandler;

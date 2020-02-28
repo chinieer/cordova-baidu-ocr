@@ -1,9 +1,7 @@
 # Cordova Plugin BaiduOcr
 ================================
 
-百度云OCR的cordova插件，身份证识别功能已测试通过，取消原工程的hook部分，修改部分bug。
-
-Forked from https://github.com/liugogal/cordova-plugin-baidu-ocr
+百度云OCR的cordova插件，iOS和android能识别身份证、银行卡、行驶证、驾驶证、车牌、营业执照、通用票据，android还能识别护照、数字、二维码、名片、手写、彩票、增值税发票。
 
 
 ## Installation
@@ -48,6 +46,16 @@ A full example could be:
             console.log(error)
         })
 ```
+销毁本地控制模型（destroy）：
+```js
+    BaiduOcr.destroy(
+        ()=>{
+            console.log('destroy ok');
+        },
+        (error)=>{
+            console.log(error)
+        });
+```
 扫描身份证（scan id card）:
 ```js
     //默认使用的是本地质量控制，如果想使用拍照的方式，可以修改参数为
@@ -65,13 +73,74 @@ A full example could be:
             console.log(error)
         });
 ```
-销毁本地控制模型（destroy）：
+扫描银行卡:
 ```js
-    BaiduOcr.destroy(
-        ()=>{
-            console.log('destroy ok');
-        },
-        (error)=>{
-            console.log(error)
-        });
+    BaiduOcr.scanBankCard({}, (result)=>{
+        console.log(JSON.stringify(result));
+    },
+    (error)=>{
+        console.log(JSON.stringify(error));
+    });
+```
+扫描行驶证:
+```js
+    BaiduOcr.scanVehicleLicense({}, (result)=>{
+        console.log(JSON.stringify(result));
+    },
+    (error)=>{
+        console.log(JSON.stringify(error));
+    });
+```
+扫描驾驶证:
+```js
+    BaiduOcr.scanDrivingLicense({}, (result)=>{
+        console.log(JSON.stringify(result));
+    },
+    (error)=>{
+        console.log(JSON.stringify(error));
+    });
+```
+扫描车牌:
+```js
+    BaiduOcr.scanLicensePlate({}, (result)=>{
+        console.log(JSON.stringify(result));
+    },
+    (error)=>{
+        console.log(JSON.stringify(error));
+    });
+```
+扫描营业执照:
+```js
+    BaiduOcr.scanBusinessLicense({}, (result)=>{
+        console.log(JSON.stringify(result));
+    },
+    (error)=>{
+        console.log(JSON.stringify(error));
+    });
+```
+扫描通用票据:
+```js
+    BaiduOcr.scanReceipt({}, (result)=>{
+        console.log(JSON.stringify(result));
+    },
+    (error)=>{
+        console.log(JSON.stringify(error));
+    });
+```
+Android还支持以下方法:
+```js
+//护照
+scanPassport
+//数字
+scanNumbers
+//二维码
+scanQrCode
+//名片
+scanBusinessCard
+//手写
+scanHandWriting
+//彩票
+scanLottery
+//增值税发票
+scanVatInvoice
 ```

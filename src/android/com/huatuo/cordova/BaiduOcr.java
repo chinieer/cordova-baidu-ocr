@@ -40,6 +40,21 @@ public class BaiduOcr extends CordovaPlugin {
     private static final int REQUEST_CODE_PICK_IMAGE_BACK = 202;
     private static final int REQUEST_CODE_CAMERA = 102;
 
+    private static final int REQUEST_CODE_BANKCARD = 111;
+    private static final int REQUEST_CODE_VEHICLE_LICENSE = 120;
+    private static final int REQUEST_CODE_DRIVING_LICENSE = 121;
+    private static final int REQUEST_CODE_LICENSE_PLATE = 122;
+    private static final int REQUEST_CODE_BUSINESS_LICENSE = 123;
+    private static final int REQUEST_CODE_RECEIPT = 124;
+    private static final int REQUEST_CODE_PASSPORT = 125;
+    private static final int REQUEST_CODE_NUMBERS = 126;
+    private static final int REQUEST_CODE_QRCODE = 127;
+    private static final int REQUEST_CODE_BUSINESSCARD = 128;
+    private static final int REQUEST_CODE_HANDWRITING = 129;
+    private static final int REQUEST_CODE_LOTTERY = 130;
+    private static final int REQUEST_CODE_VATINVOICE = 131;
+    private static final int REQUEST_CODE_CUSTOM = 132;
+
     private CallbackContext mCallback;
     private boolean hasGotToken = false;
 
@@ -92,7 +107,7 @@ public class BaiduOcr extends CordovaPlugin {
     void init(JSONArray data, CallbackContext callbackContext) throws JSONException {
         //  初始化本地质量控制模型,释放代码在onDestory中
         //  调用身份证扫描必须加上 intent.putExtra(CameraActivity.KEY_NATIVE_MANUAL, true); 关闭自动初始化和释放本地模型
-        CameraNativeHelper.init(cordova.getContext(), OCR.getInstance().getLicense(),
+        CameraNativeHelper.init(cordova.getContext(), OCR.getInstance(cordova.getContext()).getLicense(),
                 (errorCode, e) -> {
                     String msg;
                     switch (errorCode) {
@@ -120,6 +135,7 @@ public class BaiduOcr extends CordovaPlugin {
 
                 });
         Log.e(TAG, "CameraNativeHelper.init ok");
+        callbackContext.success();
     }
 
     /**
@@ -202,6 +218,88 @@ public class BaiduOcr extends CordovaPlugin {
         cordova.getActivity().startActivityForResult(intent, REQUEST_CODE_CAMERA);
     }
 
+    void scanBase(int requestCode, CallbackContext callbackContext) throws JSONException {
+
+        JSONObject errObj = new JSONObject();
+
+        //如果百度认证未通过，则直接返回错误
+        if (!hasGotToken) {
+            errObj.put("code", -1);
+            errObj.put("message", "please init ocr");
+            callbackContext.error(errObj);
+            return;
+        }
+
+        final String filePath = FileUtil.getSaveFile(cordova.getActivity().getApplication()).getAbsolutePath();
+
+        Intent intent = new Intent(cordova.getActivity(), CameraActivity.class);
+        intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH, filePath);
+        intent.putExtra(CameraActivity.KEY_CONTENT_TYPE, CameraActivity.CONTENT_TYPE_BANK_CARD);
+
+        //设置回调
+        mCallback = callbackContext;
+        //把当前plugin设置为startActivityForResult的返回 ****重要****
+        cordova.setActivityResultCallback(this);
+        //启动扫描页面
+        cordova.getActivity().startActivityForResult(intent, requestCode);
+    }
+
+    void scanBankCard(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_BANKCARD, callbackContext);
+    }
+
+    void scanVehicleLicense(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_VEHICLE_LICENSE, callbackContext);
+    }
+
+    void scanDrivingLicense(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_DRIVING_LICENSE, callbackContext);
+    }
+
+    void scanLicensePlate(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_LICENSE_PLATE, callbackContext);
+    }
+
+    void scanBusinessLicense(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_BUSINESS_LICENSE, callbackContext);
+    }
+
+    void scanReceipt(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_RECEIPT, callbackContext);
+    }
+
+    void scanPassport(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_PASSPORT, callbackContext);
+    }
+
+    void scanNumbers(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_NUMBERS, callbackContext);
+    }
+
+    void scanQrCode(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_QRCODE, callbackContext);
+    }
+
+    void scanBusinessCard(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_BUSINESSCARD, callbackContext);
+    }
+
+    void scanHandWriting(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_HANDWRITING, callbackContext);
+    }
+
+    void scanLottery(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_LOTTERY, callbackContext);
+    }
+
+    void scanVatInvoice(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_VATINVOICE, callbackContext);
+    }
+
+    void scanCustom(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        scanBase(REQUEST_CODE_CUSTOM, callbackContext);
+    }
+
     /**
      * 销毁
      *
@@ -231,17 +329,132 @@ public class BaiduOcr extends CordovaPlugin {
             recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath);
         }
 
-        if (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                String contentType = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE);
-                String filePath = FileUtil.getSaveFile(cordova.getActivity().getApplicationContext()).getAbsolutePath();
-                if (!TextUtils.isEmpty(contentType)) {
-                    if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT.equals(contentType)) {
-                        recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
-                    } else if (CameraActivity.CONTENT_TYPE_ID_CARD_BACK.equals(contentType)) {
-                        recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath);
+        final String filePath = FileUtil.getSaveFile(cordova.getActivity().getApplicationContext()).getAbsolutePath();
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CODE_CAMERA) {
+                if (data != null) {
+                    String contentType = data.getStringExtra(CameraActivity.KEY_CONTENT_TYPE);
+                    if (!TextUtils.isEmpty(contentType)) {
+                        if (CameraActivity.CONTENT_TYPE_ID_CARD_FRONT.equals(contentType)) {
+                            recIDCard(IDCardParams.ID_CARD_SIDE_FRONT, filePath);
+                        } else if (CameraActivity.CONTENT_TYPE_ID_CARD_BACK.equals(contentType)) {
+                            recIDCard(IDCardParams.ID_CARD_SIDE_BACK, filePath);
+                        }
                     }
                 }
+            } else if (requestCode == REQUEST_CODE_BANKCARD) {
+                RecognizeService.recBankCard(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_VEHICLE_LICENSE) {
+                RecognizeService.recVehicleLicense(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_DRIVING_LICENSE) {
+                RecognizeService.recDrivingLicense(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_LICENSE_PLATE) {
+                RecognizeService.recLicensePlate(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_BUSINESS_LICENSE) {
+                RecognizeService.recBusinessLicense(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_RECEIPT) {
+                RecognizeService.recReceipt(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_PASSPORT) {
+                RecognizeService.recPassport(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_NUMBERS) {
+                RecognizeService.recNumbers(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_QRCODE) {
+                RecognizeService.recQrcode(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_BUSINESSCARD) {
+                RecognizeService.recBusinessCard(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_HANDWRITING) {
+                RecognizeService.recHandwriting(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_LOTTERY) {
+                RecognizeService.recLottery(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_VATINVOICE) {
+                RecognizeService.recVatInvoice(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
+            } else if (requestCode == REQUEST_CODE_CUSTOM) {
+                RecognizeService.recCustom(cordova.getActivity(), filePath,
+                        new RecognizeService.ServiceListener() {
+                            @Override
+                            public void onResult(String result) {
+                                mCallback.success(result);
+                            }
+                        });
             }
         }
 
@@ -252,7 +465,7 @@ public class BaiduOcr extends CordovaPlugin {
      */
     private void initAccessToken() {
 
-        OCR.getInstance().initAccessToken(new OnResultListener<AccessToken>() {
+        OCR.getInstance(cordova.getContext()).initAccessToken(new OnResultListener<AccessToken>() {
             @Override
             public void onResult(AccessToken accessToken) {
                 String token = accessToken.getAccessToken();
@@ -320,7 +533,7 @@ public class BaiduOcr extends CordovaPlugin {
         // 设置图像参数压缩质量0-100, 越大图像质量越好但是请求时间越长。 不设置则默认值为20
         param.setImageQuality(20);
 
-        OCR.getInstance().recognizeIDCard(param, new OnResultListener<IDCardResult>() {
+        OCR.getInstance(cordova.getContext()).recognizeIDCard(param, new OnResultListener<IDCardResult>() {
             @Override
             public void onResult(IDCardResult result) {
                 if (result != null && mCallback != null) {
