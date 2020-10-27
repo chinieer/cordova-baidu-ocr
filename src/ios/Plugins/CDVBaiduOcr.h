@@ -20,5 +20,6 @@
 - (void)scanLicensePlate:(CDVInvokedUrlCommand *)command;
 - (void)scanBusinessLicense:(CDVInvokedUrlCommand *)command;
 - (void)scanReceipt:(CDVInvokedUrlCommand *)command;
+- (void)scanUniversal:(CDVInvokedUrlCommand *)command;
 
 @end

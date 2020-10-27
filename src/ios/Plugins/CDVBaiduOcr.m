@@ -249,4 +249,17 @@ void (^_failHandler)(NSError *);
     [self.viewController presentViewController:vc animated:YES completion:nil];
 }
 
+- (void)scanUniversal:(CDVInvokedUrlCommand *)command {
+    currentCommandCallbackId = command.callbackId;
+
+    UIViewController * vc = [AipGeneralVC ViewControllerWithHandler:^(UIImage *image) {
+
+        [[AipOcrService shardService] detectTextBasicFromImage:image
+                                      withOptions:nil
+                                   successHandler:_successHandler
+                                      failHandler:_failHandler];
+    }];
+    [self.viewController presentViewController:vc animated:YES completion:nil];
+}
+
 @end
